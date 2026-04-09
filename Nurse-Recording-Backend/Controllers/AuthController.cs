@@ -51,7 +51,7 @@ public class AuthController : ControllerBase
 
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return Ok(new { token, user = new { nurse, isAuthenticated = true, nurseDetails = new { nurseId = nurse.Id } } });
+return Ok(new { accessToken = jwt, token = jwt, user = new { nurse, isAuthenticated = true, nurseDetails = new { nurseId = nurse.Id } } });
     }
 
     [HttpPost("logout")]
