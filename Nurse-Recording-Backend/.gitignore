@@ -1,2 +1,3 @@
 # Ignore the debug folder
 debug/
+bin/debug/
