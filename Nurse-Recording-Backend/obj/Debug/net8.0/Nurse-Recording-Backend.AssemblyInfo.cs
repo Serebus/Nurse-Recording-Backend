@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Nurse-Recording-Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7020a14365cc48a61569e9c79c227012822d6d2c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1452814056946d2c7d4a942b8cff00fe29fb99d6")]
 [assembly: System.Reflection.AssemblyProductAttribute("Nurse-Recording-Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Nurse-Recording-Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
