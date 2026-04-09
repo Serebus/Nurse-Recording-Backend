@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
         var nurse = await _context.Nurses.FirstOrDefaultAsync(n => n.Email == model.Email);
-        if (nurse == null || nurse.Password != model.Password) // Plain text - hash in prod
+        if (nurse == null || !BCrypt.Net.BCrypt.Verify(model.Password, nurse.Password))
             return Unauthorized("Invalid credentials");
 
         var claims = new[]

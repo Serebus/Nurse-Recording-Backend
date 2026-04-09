@@ -28,9 +28,10 @@ public class AdminController : ControllerBase
         var admin = new Nurse
         {
             Username = model.Username,
-            Password = model.Password, // Hash in prod: BCrypt.Net or AspNetCore.Identity
+            Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
             Email = model.Email,
-            IsAuthenticated = true
+            IsAuthenticated = true,
+            Role = "Admin"
         };
 
         _context.Nurses.Add(admin);
