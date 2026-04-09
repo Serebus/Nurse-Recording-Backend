@@ -62,8 +62,7 @@ CREATE TABLE Followups (
     FOREIGN KEY (PatientId) REFERENCES Patients(Id) ON DELETE CASCADE
 );
 
--- Seed Data
-INSERT INTO Nurses (Username, Password, Email) VALUES ('aclcnurse', 'aclcnurse123', 'aclcnurse@gmail.com');
+
 
 -- Indexes
 CREATE INDEX IX_Patients_Email ON Patients(Email);
