@@ -46,11 +46,24 @@ public class AppointmentsController : ControllerBase
     public async Task<ActionResult<Appointment>> PostAppointment(Appointment appointment)
     {
         // Validate date/time not in past
-        if (!IsValidFutureDateTime(appointment))
+        if (!DateTime.TryParse($"{appointment.Date:yyyy-MM-dd} {appointment.Time}", out var apptDateTime))
+        {
+            return BadRequest("Invalid Date or Time format.");
+        }
+        
+        if (apptDateTime < DateTime.Now)
         {
             return BadRequest("Cannot schedule appointment in the past.");
         }
         appointment.Status = "Pending";
+
+        // Prevent EF Core from attempting to insert a new Patient if one is passed in the payload
+        if (appointment.Patient != null)
+        {
+            if (appointment.PatientId == 0) appointment.PatientId = appointment.Patient.Id;
+            appointment.Patient = null;
+        }
+
         _context.Appointments.Add(appointment);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetAppointment), new { id = appointment.Id }, appointment);
@@ -61,11 +74,24 @@ public class AppointmentsController : ControllerBase
     {
         if (id != appointment.Id) return BadRequest();
         // Validate date/time not in past
-        if (!IsValidFutureDateTime(appointment))
+        if (!DateTime.TryParse($"{appointment.Date:yyyy-MM-dd} {appointment.Time}", out var apptDateTime))
+        {
+            return BadRequest("Invalid Date or Time format.");
+        }
+        
+        if (apptDateTime < DateTime.Now)
         {
             return BadRequest("Cannot schedule appointment in the past.");
         }
         appointment.Status = "Pending";
+
+        // Prevent EF Core from attempting to insert/update the Patient navigation property
+        if (appointment.Patient != null)
+        {
+            if (appointment.PatientId == 0) appointment.PatientId = appointment.Patient.Id;
+            appointment.Patient = null;
+        }
+
         _context.Entry(appointment).State = EntityState.Modified;
         try
         {
@@ -89,30 +115,13 @@ public class AppointmentsController : ControllerBase
         return NoContent();
     }
 
-    private bool IsValidFutureDateTime(Appointment appt)
-    {
-        try
-        {
-            var apptDateTime = DateTime.Parse($"{appt.Date:yyyy-MM-dd} {appt.Time}");
-            return apptDateTime >= DateTime.UtcNow;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
     private bool IsPastAppointment(Appointment appt)
     {
-        try
-        {
-            var apptDateTime = DateTime.Parse($"{appt.Date:yyyy-MM-dd} {appt.Time}");
-            return apptDateTime < DateTime.UtcNow;
-        }
-        catch
-        {
-            return true;
-        }
+        // Don't close appointments just because of a bad format
+        if (!DateTime.TryParse($"{appt.Date:yyyy-MM-dd} {appt.Time}", out var apptDateTime))
+            return false; 
+            
+        return apptDateTime < DateTime.Now;
     }
 
     private bool AppointmentExists(int id) => _context.Appointments.Any(e => e.Id == id);
