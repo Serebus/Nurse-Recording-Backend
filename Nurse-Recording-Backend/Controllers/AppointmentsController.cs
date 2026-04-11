@@ -21,7 +21,17 @@ public class AppointmentsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
     {
-        return await _context.Appointments.Include(a => a.Patient).ToListAsync();
+        var appointments = await _context.Appointments.Include(a => a.Patient).ToListAsync();
+        foreach (var appt in appointments)
+        {
+            if (IsPastAppointment(appt))
+            {
+                appt.Status = "Closed";
+                _context.Entry(appt).State = EntityState.Modified;
+            }
+        }
+        await _context.SaveChangesAsync();
+        return appointments;
     }
 
     [HttpGet("{id}")]
@@ -35,6 +45,12 @@ public class AppointmentsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Appointment>> PostAppointment(Appointment appointment)
     {
+        // Validate date/time not in past
+        if (!IsValidFutureDateTime(appointment))
+        {
+            return BadRequest("Cannot schedule appointment in the past.");
+        }
+        appointment.Status = "Pending";
         _context.Appointments.Add(appointment);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetAppointment), new { id = appointment.Id }, appointment);
@@ -44,6 +60,12 @@ public class AppointmentsController : ControllerBase
     public async Task<IActionResult> PutAppointment(int id, Appointment appointment)
     {
         if (id != appointment.Id) return BadRequest();
+        // Validate date/time not in past
+        if (!IsValidFutureDateTime(appointment))
+        {
+            return BadRequest("Cannot schedule appointment in the past.");
+        }
+        appointment.Status = "Pending";
         _context.Entry(appointment).State = EntityState.Modified;
         try
         {
@@ -65,6 +87,32 @@ public class AppointmentsController : ControllerBase
         _context.Appointments.Remove(appointment);
         await _context.SaveChangesAsync();
         return NoContent();
+    }
+
+    private bool IsValidFutureDateTime(Appointment appt)
+    {
+        try
+        {
+            var apptDateTime = DateTime.Parse($"{appt.Date:yyyy-MM-dd} {appt.Time}");
+            return apptDateTime >= DateTime.UtcNow;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private bool IsPastAppointment(Appointment appt)
+    {
+        try
+        {
+            var apptDateTime = DateTime.Parse($"{appt.Date:yyyy-MM-dd} {appt.Time}");
+            return apptDateTime < DateTime.UtcNow;
+        }
+        catch
+        {
+            return true;
+        }
     }
 
     private bool AppointmentExists(int id) => _context.Appointments.Any(e => e.Id == id);

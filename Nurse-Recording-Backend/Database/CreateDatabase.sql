@@ -39,6 +39,7 @@ CREATE TABLE Appointments (
     Date DATE NOT NULL,
     Time NVARCHAR(10) NOT NULL,
     Reason NVARCHAR(1000),
+    Status NVARCHAR(20) DEFAULT 'Pending',
     FOREIGN KEY (PatientId) REFERENCES Patients(Id) ON DELETE CASCADE
 );
 
