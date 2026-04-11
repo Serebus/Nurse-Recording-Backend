@@ -35,6 +35,13 @@ public class PatientRecordsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PatientRecord>> PostPatientRecord(PatientRecord record)
     {
+        // Prevent EF Core from attempting to insert a new Patient if one is passed in the payload
+        if (record.Patient != null)
+        {
+            if (record.PatientId == 0) record.PatientId = record.Patient.Id;
+            record.Patient = null!;
+        }
+
         _context.PatientRecords.Add(record);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetPatientRecord), new { id = record.Id }, record);
@@ -44,6 +51,14 @@ public class PatientRecordsController : ControllerBase
     public async Task<IActionResult> PutPatientRecord(int id, PatientRecord record)
     {
         if (id != record.Id) return BadRequest();
+
+        // Prevent EF Core from attempting to insert/update Patient navigation property
+        if (record.Patient != null)
+        {
+            if (record.PatientId == 0) record.PatientId = record.Patient.Id;
+            record.Patient = null!;
+        }
+
         _context.Entry(record).State = EntityState.Modified;
         try
         {

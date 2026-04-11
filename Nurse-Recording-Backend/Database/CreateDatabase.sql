@@ -58,9 +58,17 @@ CREATE TABLE PatientRecords (
 CREATE TABLE Followups (
     Id INT PRIMARY KEY IDENTITY(1,1),
     PatientId INT NOT NULL,
+    RecordId INT NOT NULL,
     Date DATE NOT NULL,
+    Diagnosis NVARCHAR(1000),
+    New_Diagnostic NVARCHAR(1000),
+    Symptom NVARCHAR(1000),
+    New_Symptom NVARCHAR(1000),
+    Treatment NVARCHAR(1000),
+    Additional_Treatment NVARCHAR(1000),
     Notes NVARCHAR(MAX),
-    FOREIGN KEY (PatientId) REFERENCES Patients(Id) ON DELETE CASCADE
+    FOREIGN KEY (PatientId) REFERENCES Patients(Id) ON DELETE CASCADE,
+    FOREIGN KEY (RecordId) REFERENCES PatientRecords(Id) ON DELETE NO ACTION
 );
 
 

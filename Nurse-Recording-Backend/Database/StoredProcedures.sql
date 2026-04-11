@@ -92,7 +92,88 @@ BEGIN
 END
 GO
 
+-- Schema patch: align existing Followups table with current backend model
+IF COL_LENGTH('dbo.Followups', 'RecordId') IS NULL
+BEGIN
+    ALTER TABLE dbo.Followups ADD RecordId INT NULL;
+END
+GO
+
+IF COL_LENGTH('dbo.Followups', 'Diagnosis') IS NULL
+BEGIN
+    ALTER TABLE dbo.Followups ADD Diagnosis NVARCHAR(1000) NULL;
+END
+GO
+
+IF COL_LENGTH('dbo.Followups', 'New_Diagnostic') IS NULL
+BEGIN
+    ALTER TABLE dbo.Followups ADD New_Diagnostic NVARCHAR(1000) NULL;
+END
+GO
+
+IF COL_LENGTH('dbo.Followups', 'Symptom') IS NULL
+BEGIN
+    ALTER TABLE dbo.Followups ADD Symptom NVARCHAR(1000) NULL;
+END
+GO
+
+IF COL_LENGTH('dbo.Followups', 'New_Symptom') IS NULL
+BEGIN
+    ALTER TABLE dbo.Followups ADD New_Symptom NVARCHAR(1000) NULL;
+END
+GO
+
+IF COL_LENGTH('dbo.Followups', 'Treatment') IS NULL
+BEGIN
+    ALTER TABLE dbo.Followups ADD Treatment NVARCHAR(1000) NULL;
+END
+GO
+
+IF COL_LENGTH('dbo.Followups', 'Additional_Treatment') IS NULL
+BEGIN
+    ALTER TABLE dbo.Followups ADD Additional_Treatment NVARCHAR(1000) NULL;
+END
+GO
+
+IF EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE object_id = OBJECT_ID('dbo.Followups')
+      AND name = 'RecordId'
+      AND is_nullable = 1
+)
+BEGIN
+    UPDATE dbo.Followups
+    SET RecordId = 1
+    WHERE RecordId IS NULL;
+END
+GO
+
+IF EXISTS (
+    SELECT 1
+    FROM sys.columns
+    WHERE object_id = OBJECT_ID('dbo.Followups')
+      AND name = 'RecordId'
+      AND is_nullable = 1
+)
+BEGIN
+    ALTER TABLE dbo.Followups ALTER COLUMN RecordId INT NOT NULL;
+END
+GO
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.foreign_keys
+    WHERE name = 'FK_Followups_PatientRecords_RecordId'
+)
+BEGIN
+    ALTER TABLE dbo.Followups
+    ADD CONSTRAINT FK_Followups_PatientRecords_RecordId
+    FOREIGN KEY (RecordId) REFERENCES dbo.PatientRecords(Id);
+END
+GO
+
 -- Similar SPs for Appointments, Records can be added
 
-PRINT 'Stored procedures created successfully.';
+PRINT 'Stored procedures and schema patch created successfully.';
 GO
