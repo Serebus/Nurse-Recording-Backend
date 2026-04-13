@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Nurse_Recording_Backend.Data;
+using Microsoft.AspNetCore.SignalR;
+using Nurse_Recording_Backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +69,7 @@ builder.Services.AddAuthentication(x =>
 });
 
 builder.Services.AddAuthorization();
+builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
@@ -105,6 +108,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<AlarmHub>("/alarmhub");
 
 app.Run();
-

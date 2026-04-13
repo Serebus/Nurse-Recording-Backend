@@ -92,6 +92,20 @@ BEGIN
 END
 GO
 
+-- SP: Update Alarm State (IoT)
+CREATE OR ALTER PROCEDURE sp_UpdateAlarmState
+    @State INT,
+    @DeviceId NVARCHAR(100) = NULL,
+    @NurseId INT = NULL
+AS
+BEGIN
+    INSERT INTO Alarms (State, DeviceId, NurseId)
+    VALUES (@State, @DeviceId, @NurseId);
+    
+    SELECT SCOPE_IDENTITY() AS Id;
+END
+GO
+
 -- Schema patch: align existing Followups table with current backend model
 IF COL_LENGTH('dbo.Followups', 'RecordId') IS NULL
 BEGIN
@@ -172,8 +186,6 @@ BEGIN
     FOREIGN KEY (RecordId) REFERENCES dbo.PatientRecords(Id);
 END
 GO
-
--- Similar SPs for Appointments, Records can be added
 
 PRINT 'Stored procedures and schema patch created successfully.';
 GO

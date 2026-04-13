@@ -71,10 +71,20 @@ CREATE TABLE Followups (
     FOREIGN KEY (RecordId) REFERENCES PatientRecords(Id) ON DELETE NO ACTION
 );
 
-
+-- Alarms table for IoT
+CREATE TABLE Alarms (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    State INT NOT NULL, -- 0=Idle,1=Calling,2=Coming,3=Ended
+    Timestamp DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    DeviceId NVARCHAR(100),
+    NurseId INT NULL,
+    FOREIGN KEY (NurseId) REFERENCES Nurses(Id)
+);
 
 -- Indexes
 CREATE INDEX IX_Patients_Email ON Patients(Email);
 CREATE INDEX IX_Appointments_Date ON Appointments(Date);
 CREATE INDEX IX_PatientRecords_Date ON PatientRecords(Date);
+CREATE INDEX IX_Alarms_State ON Alarms(State);
+CREATE INDEX IX_Alarms_Timestamp ON Alarms(Timestamp);
 GO
