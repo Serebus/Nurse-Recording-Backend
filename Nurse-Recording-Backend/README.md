@@ -33,6 +33,8 @@ To initialize the database locally, execute the SQL scripts in the following ord
    - `sp_DeletePatient`
    - `sp_SearchPatients`
 
+
+
 ## Useful Queries
 
 The `Database/QueryNurses.sql` file contains helpful queries for verifying your setup, checking registered accounts, and counting the number of administrative users.
@@ -43,3 +45,6 @@ This backend is designed to be consumed by the **Nurse-Recording-System-Web** fr
 
 Example Connection String:
 `Server=(localdb)\MSSQLLocalDB;Database=NurseRecordingDb;Trusted_Connection=True;`
+
+## How to Run Backend
+Oppen VS Code terminal and run dotnet run: `dotnet run --launch-profile https`
