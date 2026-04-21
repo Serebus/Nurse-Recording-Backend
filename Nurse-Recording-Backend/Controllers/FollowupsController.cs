@@ -38,6 +38,12 @@ public class FollowupsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Followup>> PostFollowup(Followup followup)
     {
+        var record = await _context.PatientRecords.FindAsync(followup.RecordId);
+        if (record != null && record.Status == "Closed")
+        {
+            return BadRequest("Cannot add followup to a closed patient record.");
+        }
+
         if (followup.Patient != null)
         {
             if (followup.PatientId == 0) followup.PatientId = followup.Patient.Id;

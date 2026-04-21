@@ -39,6 +39,14 @@ public class AppointmentsController : ControllerBase
     {
         var appointment = await _context.Appointments.Include(a => a.Patient).FirstOrDefaultAsync(a => a.Id == id);
         if (appointment == null) return NotFound();
+
+        if (IsPastAppointment(appointment) && appointment.Status != "Closed")
+        {
+            appointment.Status = "Closed";
+            _context.Entry(appointment).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
         return appointment;
     }
 
@@ -121,7 +129,8 @@ public class AppointmentsController : ControllerBase
         if (!DateTime.TryParse($"{appt.Date:yyyy-MM-dd} {appt.Time}", out var apptDateTime))
             return false; 
             
-        return apptDateTime < DateTime.Now;
+        // Add a 5-minute grace period
+        return apptDateTime.AddMinutes(5) < DateTime.Now;
     }
 
     private bool AppointmentExists(int id) => _context.Appointments.Any(e => e.Id == id);

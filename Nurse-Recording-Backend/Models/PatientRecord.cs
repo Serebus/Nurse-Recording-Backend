@@ -14,4 +14,5 @@ public class PatientRecord
     public string Symptom { get; set; } = string.Empty;
     public string Treatment { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
+    public string Status { get; set; } = "Open";
 }

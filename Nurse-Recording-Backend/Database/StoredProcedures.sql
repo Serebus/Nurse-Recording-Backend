@@ -187,5 +187,11 @@ BEGIN
 END
 GO
 
+IF COL_LENGTH('dbo.PatientRecords', 'Status') IS NULL
+BEGIN
+    ALTER TABLE dbo.PatientRecords ADD Status NVARCHAR(20) DEFAULT 'Open' WITH VALUES;
+END
+GO
+
 PRINT 'Stored procedures and schema patch created successfully.';
 GO

@@ -52,6 +52,7 @@ CREATE TABLE PatientRecords (
     Symptom NVARCHAR(1000),
     Treatment NVARCHAR(1000),
     Notes NVARCHAR(MAX),
+    Status NVARCHAR(20) DEFAULT 'Open',
     FOREIGN KEY (PatientId) REFERENCES Patients(Id) ON DELETE CASCADE
 );
 

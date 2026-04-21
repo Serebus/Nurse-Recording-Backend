@@ -60,6 +60,15 @@ return Ok(new { accessToken = jwt, token = jwt, user = new { nurse, isAuthentica
         // Client clears token, server no blacklist for simplicity
         return Ok(new { message = "Logged out" });
     }
+
+    [HttpGet("nurses")]
+    public async Task<IActionResult> GetNurses()
+    {
+        var nurses = await _context.Nurses
+            .Select(n => new { n.Username, n.Email })
+            .ToListAsync();
+        return Ok(nurses);
+    }
 }
 
 public class LoginModel
