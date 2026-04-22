@@ -47,21 +47,18 @@ public class AlarmController : ControllerBase
         return Ok(alarm);
     }
 
-    [HttpGet("{deviceId}")]
-    public async Task<IActionResult> GetStatus(string deviceId)
+    [HttpGet]
+    public async Task<IActionResult> GetStatus()
     {
-        var alarm = await _context.Alarms
-            .Where(a => a.DeviceId == deviceId)
-            .OrderByDescending(a => a.Timestamp)
-            .FirstOrDefaultAsync();
+        var latestAlarms = await _context.Alarms
+            .GroupBy(a => a.DeviceId)
+            .Select(g => g.OrderByDescending(a => a.Timestamp).FirstOrDefault())
+            .ToListAsync();
 
-        if (alarm == null)
-            return NotFound(new { message = "No alarm history for this device", DeviceId = deviceId, State = AlarmState.Idle });
-
-        return Ok(alarm);
+        return Ok(latestAlarms);
     }
 
-    [HttpPost("status")]
+    [HttpPost("newDevice")]
     public async Task<IActionResult> GetStatusPost([FromBody] GetStatusRequest request)
     {
         var alarm = await _context.Alarms
