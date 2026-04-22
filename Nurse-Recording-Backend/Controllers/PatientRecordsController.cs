@@ -8,7 +8,7 @@ namespace Nurse_Recording_Backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Nurse,Admin")]
 public class PatientRecordsController : ControllerBase
 {
     private readonly AppDbContext _context;

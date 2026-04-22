@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
         var identifier = !string.IsNullOrEmpty(model.Email) ? model.Email : model.Username;
-        
+
         var nurse = await _context.Nurses.FirstOrDefaultAsync(n => n.Email == identifier || n.Username == identifier);
         if (nurse == null || !BCrypt.Net.BCrypt.Verify(model.Password, nurse.Password))
             return Unauthorized("Invalid credentials");
@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
 
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-return Ok(new { accessToken = jwt, token = jwt, user = new { nurse, isAuthenticated = true, nurseDetails = new { nurseId = nurse.Id } } });
+        return Ok(new { accessToken = jwt, token = jwt, user = new { nurse, isAuthenticated = true, nurseDetails = new { nurseId = nurse.Id } } });
     }
 
     [HttpPost("logout")]
@@ -73,9 +73,3 @@ return Ok(new { accessToken = jwt, token = jwt, user = new { nurse, isAuthentica
     }
 }
 
-public class LoginModel
-{
-    public string? Email { get; set; }
-    public string? Username { get; set; }
-    public string Password { get; set; } = string.Empty;
-}

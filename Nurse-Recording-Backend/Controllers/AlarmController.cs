@@ -10,7 +10,7 @@ namespace Nurse_Recording_Backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Nurse,Admin,IotAdmin")]
 public class AlarmController : ControllerBase
 {
     private readonly AppDbContext _context;
