@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 using Nurse_Recording_Backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://*:5270");
+// builder.WebHost.UseUrls("http://*:5270");
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>
