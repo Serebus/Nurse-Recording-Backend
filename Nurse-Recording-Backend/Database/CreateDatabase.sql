@@ -72,6 +72,13 @@ CREATE TABLE Followups (
     FOREIGN KEY (RecordId) REFERENCES PatientRecords(Id) ON DELETE NO ACTION
 );
 
+-- Devices table to track registered hardware
+CREATE TABLE Devices (
+    DeviceId NVARCHAR(100) PRIMARY KEY,
+    Description NVARCHAR(255),
+    RegisteredAt DATETIME2 DEFAULT GETUTCDATE()
+);
+
 -- Alarms table for IoT
 CREATE TABLE Alarms (
     Id INT PRIMARY KEY IDENTITY(1,1),
@@ -79,7 +86,8 @@ CREATE TABLE Alarms (
     Timestamp DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
     DeviceId NVARCHAR(100),
     NurseId INT NULL,
-    FOREIGN KEY (NurseId) REFERENCES Nurses(Id)
+    FOREIGN KEY (NurseId) REFERENCES Nurses(Id),
+    FOREIGN KEY (DeviceId) REFERENCES Devices(DeviceId) ON DELETE CASCADE
 );
 
 -- Indexes

@@ -4,6 +4,7 @@ using Nurse_Recording_Backend.Data;
 using Nurse_Recording_Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
 
 namespace Nurse_Recording_Backend.Controllers;
 
@@ -12,10 +13,12 @@ namespace Nurse_Recording_Backend.Controllers;
 public class AdminController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IConfiguration _configuration;
 
-    public AdminController(AppDbContext context)
+    public AdminController(AppDbContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
 
     [HttpPost("create-admin")]
@@ -28,7 +31,7 @@ public class AdminController : ControllerBase
         var admin = new Nurse
         {
             Username = model.Username,
-            Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
+            Password = BCrypt.Net.BCrypt.HashPassword(model.Password, workFactor: _configuration.GetValue<int>("BCrypt:WorkFactor", 11)),
             Email = model.Email,
             IsAuthenticated = true,
             Role = "Admin"

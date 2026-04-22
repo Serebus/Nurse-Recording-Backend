@@ -23,13 +23,20 @@ public class AlarmController : ControllerBase
         _hubContext = hubContext;
     }
 
-    [HttpPatch]
-    public async Task<IActionResult> UpdateState([FromBody] UpdateAlarmStateRequest request)
+    [HttpPatch("{deviceId}")]
+    public async Task<IActionResult> UpdateState(string deviceId, [FromBody] UpdateAlarmStateRequest request)
     {
+        // Validate that the device is registered
+        var deviceExists = await _context.Devices.AnyAsync(d => d.DeviceId == deviceId);
+        if (!deviceExists)
+        {
+            return NotFound(new { message = "Device not registered", DeviceId = deviceId });
+        }
+
         var alarm = new Alarm
         {
             State = request.State,
-            DeviceId = request.DeviceId,
+            DeviceId = deviceId,
             Timestamp = DateTime.UtcNow
             // NurseId from claims if needed
         };
@@ -37,7 +44,7 @@ public class AlarmController : ControllerBase
         _context.Alarms.Add(alarm);
         await _context.SaveChangesAsync();
 
-        await _hubContext.Clients.All.SendAsync("ReceiveStateChange", new 
+        await _hubContext.Clients.All.SendAsync("ReceiveStateChange", new
         {
             State = alarm.State.ToString(),
             Timestamp = alarm.Timestamp,
@@ -61,13 +68,35 @@ public class AlarmController : ControllerBase
     [HttpPost("newDevice")]
     public async Task<IActionResult> GetStatusPost([FromBody] GetStatusRequest request)
     {
+        var device = await _context.Devices.FirstOrDefaultAsync(d => d.DeviceId == request.DeviceId);
+
+        if (device == null)
+        {
+            // 1. Register the device first
+            device = new Device { DeviceId = request.DeviceId, Description = "Auto-registered" };
+            _context.Devices.Add(device);
+            await _context.SaveChangesAsync();
+
+            // 2. Add initial Idle record after device exists
+            var initialAlarm = new Alarm { DeviceId = request.DeviceId, State = AlarmState.Idle, Timestamp = DateTime.UtcNow };
+            _context.Alarms.Add(initialAlarm);
+            await _context.SaveChangesAsync();
+
+            return Ok(initialAlarm);
+        }
+
         var alarm = await _context.Alarms
             .Where(a => a.DeviceId == request.DeviceId)
             .OrderByDescending(a => a.Timestamp)
             .FirstOrDefaultAsync();
 
         if (alarm == null)
-            return Ok(new { DeviceId = request.DeviceId, State = AlarmState.Idle, message = "Defaulting to Idle" });
+        {
+            // This case should be rare now since we add an initial record upon registration
+            alarm = new Alarm { DeviceId = request.DeviceId, State = AlarmState.Idle, Timestamp = DateTime.UtcNow };
+            _context.Alarms.Add(alarm);
+            await _context.SaveChangesAsync();
+        }
 
         return Ok(alarm);
     }
@@ -83,5 +112,4 @@ public class UpdateAlarmStateRequest
 {
     [Required]
     public AlarmState State { get; set; }
-    public string? DeviceId { get; set; }
 }

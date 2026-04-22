@@ -12,10 +12,14 @@ public class Alarm
     
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     
-    public string? DeviceId { get; set; }
+    [Required]
+    public string DeviceId { get; set; } = string.Empty;
     
     public int? NurseId { get; set; }
     
     [ForeignKey("NurseId")]
     public Nurse? Nurse { get; set; }
+
+    [ForeignKey("DeviceId")]
+    public Device? Device { get; set; }
 }
