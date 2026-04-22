@@ -5,6 +5,7 @@ using Nurse_Recording_Backend.Data;
 using Nurse_Recording_Backend.Hubs;
 using Nurse_Recording_Backend.Models;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Nurse_Recording_Backend.Controllers;
 
@@ -45,6 +46,40 @@ public class AlarmController : ControllerBase
 
         return Ok(alarm);
     }
+
+    [HttpGet("{deviceId}")]
+    public async Task<IActionResult> GetStatus(string deviceId)
+    {
+        var alarm = await _context.Alarms
+            .Where(a => a.DeviceId == deviceId)
+            .OrderByDescending(a => a.Timestamp)
+            .FirstOrDefaultAsync();
+
+        if (alarm == null)
+            return NotFound(new { message = "No alarm history for this device", DeviceId = deviceId, State = AlarmState.Idle });
+
+        return Ok(alarm);
+    }
+
+    [HttpPost("status")]
+    public async Task<IActionResult> GetStatusPost([FromBody] GetStatusRequest request)
+    {
+        var alarm = await _context.Alarms
+            .Where(a => a.DeviceId == request.DeviceId)
+            .OrderByDescending(a => a.Timestamp)
+            .FirstOrDefaultAsync();
+
+        if (alarm == null)
+            return Ok(new { DeviceId = request.DeviceId, State = AlarmState.Idle, message = "Defaulting to Idle" });
+
+        return Ok(alarm);
+    }
+}
+
+public class GetStatusRequest
+{
+    [Required]
+    public string DeviceId { get; set; } = string.Empty;
 }
 
 public class UpdateAlarmStateRequest
