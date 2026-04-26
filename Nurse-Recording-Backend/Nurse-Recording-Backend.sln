@@ -1,11 +1,8 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nurse-Recording-Backend", "Nurse-Recording-Backend.csproj", "{D750C3AC-878D-4EB3-8384-502F6D29AECE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "..\TestProject1\TestProject1\TestProject1.csproj", "{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,18 +26,6 @@ Global
 		{D750C3AC-878D-4EB3-8384-502F6D29AECE}.Release|x64.Build.0 = Release|Any CPU
 		{D750C3AC-878D-4EB3-8384-502F6D29AECE}.Release|x86.ActiveCfg = Release|Any CPU
 		{D750C3AC-878D-4EB3-8384-502F6D29AECE}.Release|x86.Build.0 = Release|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Debug|x64.Build.0 = Debug|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Debug|x86.Build.0 = Debug|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Release|x64.ActiveCfg = Release|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Release|x64.Build.0 = Release|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Release|x86.ActiveCfg = Release|Any CPU
-		{0D41C62F-2CD3-4570-AC0D-BD4294C18F59}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
