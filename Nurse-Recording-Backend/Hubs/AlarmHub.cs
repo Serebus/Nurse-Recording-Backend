@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Nurse_Recording_Backend.Data;
 using Nurse_Recording_Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Nurse_Recording_Backend.Hubs;
 
@@ -25,21 +25,10 @@ public class AlarmHub : Hub
         var snapshot = latestAlarms.Select(a => new
         {
             DeviceId = a!.DeviceId,
-            State = (int)a.State,
+            State    = (int)a.State,      // ← send as int, not string
         });
 
         await Clients.Caller.SendAsync("AlarmSnapshot", snapshot);
         await base.OnConnectedAsync();
-    }
-
-    public async Task SendStateChange(AlarmState state, string deviceId = null)
-    {
-        var alarm = new 
-        {
-            State = state.ToString(),
-            Timestamp = DateTime.UtcNow,
-            DeviceId = deviceId
-        };
-        await Clients.All.SendAsync("ReceiveStateChange", alarm);
     }
 }

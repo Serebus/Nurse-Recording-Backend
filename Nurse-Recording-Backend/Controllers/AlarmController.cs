@@ -44,12 +44,12 @@ public class AlarmController : ControllerBase
         _context.Alarms.Add(alarm);
         await _context.SaveChangesAsync();
 
-        await _hubContext.Clients.All.SendAsync("ReceiveStateChange", new
-        {
-            State = alarm.State.ToString(),
-            Timestamp = alarm.Timestamp,
-            DeviceId = alarm.DeviceId
-        });
+        // In UpdateState(), replace the SendAsync call with:
+await _hubContext.Clients.All.SendAsync("AlarmUpdated", new
+{
+    DeviceId = alarm.DeviceId,
+    State    = (int)alarm.State,    // ← int, not .ToString()
+});
 
         return Ok(alarm);
     }
