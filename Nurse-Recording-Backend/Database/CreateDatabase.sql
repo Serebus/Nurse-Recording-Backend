@@ -91,9 +91,27 @@ CREATE TABLE Alarms (
 );
 
 -- Indexes
-CREATE INDEX IX_Patients_Email ON Patients(Email);
-CREATE INDEX IX_Appointments_Date ON Appointments(Date);
-CREATE INDEX IX_PatientRecords_Date ON PatientRecords(Date);
-CREATE INDEX IX_Alarms_State ON Alarms(State);
-CREATE INDEX IX_Alarms_Timestamp ON Alarms(Timestamp);
+CREATE INDEX IX_Patients_Email        ON Patients(Email);
+CREATE INDEX IX_Appointments_Date     ON Appointments(Date);
+CREATE INDEX IX_Appointments_PatientId ON Appointments(PatientId);
+CREATE INDEX IX_PatientRecords_Date   ON PatientRecords(Date);
+CREATE INDEX IX_PatientRecords_PatientId ON PatientRecords(PatientId);
+CREATE INDEX IX_Followups_PatientId   ON Followups(PatientId);
+CREATE INDEX IX_Followups_RecordId    ON Followups(RecordId);
+CREATE INDEX IX_Alarms_State          ON Alarms(State);
+CREATE INDEX IX_Alarms_Timestamp      ON Alarms(Timestamp);
+CREATE INDEX IX_Alarms_DeviceId       ON Alarms(DeviceId);
+GO
+
+-- -------------------------------------------------------
+-- Seed Data (mirrors EF Core OnModelCreating HasData)
+-- -------------------------------------------------------
+-- Default nurse account (password stored as plain-text in dev seed; hash it in production)
+IF NOT EXISTS (SELECT 1 FROM Nurses WHERE Email = 'aclcnurse@gmail.com')
+BEGIN
+    SET IDENTITY_INSERT Nurses ON;
+    INSERT INTO Nurses (Id, Username, Password, Email, IsAuthenticated, Role)
+    VALUES (1, 'aclcnurse', 'aclcnurse123', 'aclcnurse@gmail.com', 1, 'Nurse');
+    SET IDENTITY_INSERT Nurses OFF;
+END
 GO
